@@ -45,31 +45,38 @@ class Kkd_Pff_Paystack_Public
 
     public function enqueue_scripts()
     {
-        global $posts;
-        $pattern = get_shortcode_regex();
-        preg_match('/'.$pattern.'/s', $posts[0]->post_content, $matches);
+        // global $posts;
+        // $pattern = get_shortcode_regex();
+        // preg_match('/'.$pattern.'/s', $posts[0]->post_content, $matches);
+        
 
+        // The preg_match() above allows the scripts below to be loaded only when shortcodes
+        // are embedded in posts and pages. 
+        // This prevents payment forms embedded in widget areas from validating and processing since the required scripts are not loaded.
+        // https://stackoverflow.com/questions/48497493/plugin-with-shortcode-missing-js-and-css-files-when-used-in-widget-areas
+
+        /**
+         * if(is_array($matches)) {
+         *   if( count($matches) > 0) {
+         *       if($matches[2] == 'pff-paystack') {
+         *           wp_register_script('Paystack', 'https://js.paystack.co/v1/inline.js', false, '1');
+         *           wp_enqueue_script('Paystack');
+         *           wp_enqueue_script('paystack_frontend', plugin_dir_url(__FILE__) . 'js/paystack-forms-public.js', array('jquery'), $this->version, true, true);
+         *           wp_localize_script('paystack_frontend', 'kkd_pff_settings', array('key' => Kkd_Pff_Paystack_Public::fetchPublicKey(), 'fee' => Kkd_Pff_Paystack_Public::fetchFeeSettings()), $this->version, true, true);
+         *       }
+         *   }
+         * }
+        */
+
+        // Revert back to ver 3.3 style
+        // Load the complete jQuery UI files instead of only the ui-core
+        // Bringing back the datepicker plugin that is not loaded with ui-core
         wp_enqueue_script('blockUI', plugin_dir_url(__FILE__) . 'js/jquery.blockUI.min.js', array('jquery'), $this->version, true, true);
-        wp_enqueue_script('jquery-ui-core');
-
-        if(is_array($matches)) {
-            if( count($matches) > 0) {
-                if($matches[2] == 'pff-paystack') {
-                    wp_register_script('Paystack', 'https://js.paystack.co/v1/inline.js', false, '1');
-                    wp_enqueue_script('Paystack');
-                    wp_enqueue_script('paystack_frontend', plugin_dir_url(__FILE__) . 'js/paystack-forms-public.js', array('jquery'), $this->version, true, true);
-                    wp_localize_script('paystack_frontend', 'kkd_pff_settings', array('key' => Kkd_Pff_Paystack_Public::fetchPublicKey(), 'fee' => Kkd_Pff_Paystack_Public::fetchFeeSettings()), $this->version, true, true);
-                }
-            }
-        }
-
-
-        // wp_enqueue_script('blockUI', plugin_dir_url(__FILE__) . 'js/jquery.blockUI.min.js', array('jquery'), $this->version, true, true);
-        // wp_enqueue_script('jquery-ui-core');
-        // wp_register_script('Paystack', 'https://js.paystack.co/v1/inline.js', false, '1');
-        // wp_enqueue_script('Paystack');
-        // wp_enqueue_script('paystack_frontend', plugin_dir_url(__FILE__) . 'js/paystack-forms-public.js', array('jquery'), $this->version, true, true);
-        // wp_localize_script('paystack_frontend', 'kkd_pff_settings', array('key' => Kkd_Pff_Paystack_Public::fetchPublicKey(), 'fee' => Kkd_Pff_Paystack_Public::fetchFeeSettings()), $this->version, true, true);
+        wp_enqueue_script('jQuery_UI', plugin_dir_url(__FILE__) . 'js/jquery.ui.min.js', array('jquery'), $this->version, true, true);
+        wp_register_script('Paystack', 'https://js.paystack.co/v1/inline.js', false, '1');
+        wp_enqueue_script('Paystack');
+        wp_enqueue_script('paystack_frontend', plugin_dir_url(__FILE__) . 'js/paystack-forms-public.js', array('jquery'), $this->version, true, true);
+        wp_localize_script('paystack_frontend', 'kkd_pff_settings', array('key' => Kkd_Pff_Paystack_Public::fetchPublicKey(), 'fee' => Kkd_Pff_Paystack_Public::fetchFeeSettings()), $this->version, true, true);
     }
 }
 
